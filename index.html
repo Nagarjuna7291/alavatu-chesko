@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alavatu Chesko - Daily Habit Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#10B981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Alavatu Chesko">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #090D16;
+      color: #F8FAFC;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Mobile Container Frame */
+    .mobile-frame {
+      width: 100%;
+      max-width: 430px;
+      height: 880px;
+      max-height: 92vh;
+      background: #0F172A;
+      border-radius: 44px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 12px #1E293B;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #334155;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Light Theme Styles */
+    .mobile-frame.light-theme {
+      background: #F8FAFC;
+      border-color: #E2E8F0;
+      color: #0F172A;
+    }
+
+    /* Dynamic Island Notch */
+    .notch {
+      width: 120px;
+      height: 26px;
+      background: #000;
+      border-radius: 20px;
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+    }
+
+    .camera-dot {
+      width: 10px;
+      height: 10px;
+      background: #111;
+      border-radius: 50%;
+      border: 1px solid #222;
+    }
+
+    /* Header Bar */
+    .app-header {
+      padding-top: 45px;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 12px;
+      background: #0F172A;
+      border-bottom: 1px solid #1E293B;
+      transition: all 0.3s;
+    }
+    .light-theme .app-header {
+      background: #FFFFFF;
+      border-bottom-color: #E2E8F0;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .telugu-badge {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10B981;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .sub-date {
+      font-size: 12px;
+      color: #94A3B8;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .streak-pill {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #F59E0B;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .theme-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid #334155;
+      background: #1E293B;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .light-theme .theme-btn {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+      color: #0F172A;
+    }
+
+    /* Tab Switcher */
+    .tab-nav {
+      display: flex;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .light-theme .tab-nav {
+      background: #F1F5F9;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 0;
+      text-align: center;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94A3B8;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn.active {
+      background: #10B981;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Content Area */
+    .content-viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 90px;
+      scroll-behavior: smooth;
+    }
+
+    .content-viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Date Strip */
+    .date-strip {
+      display: flex;
+      gap: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+    }
+    .date-strip::-webkit-scrollbar { display: none; }
+
+    .date-card {
+      min-width: 50px;
+      height: 64px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+      background: #1E293B;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .light-theme .date-card {
+      background: #FFFFFF;
+      border-color: #E2E8F0;
+    }
+
+    .date-card.selected {
+      background: #10B981;
+      border-color: #10B981;
+      color: #FFF !important;
+    }
+
+    .date-card .d-name {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #94A3B8;
+      margin-bottom: 2px;
+    }
+    .date-card.selected .d-name { color: #FFF; }
+
+    .date-card .d-num {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    /* Progress Banner */
+    .progress-banner {
+      margin: 0 16px 14px 16px;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .light-theme .progress-banner {
+      background: #FFFFFF;
+      border-color: #E2E8F0;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .p-title {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .p-sub {
+      font-size: 12px;
+      color: #94A3B8;
+      margin-top: 2px;
+    }
+
+    .p-motto {
+      font-size: 12px;
+      color: #10B981;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .p-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 3px solid #10B981;
+      background: rgba(16, 185, 129, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #10B981;
+    }
+
+    .p-bar-track {
+      height: 8px;
+      background: rgba(148, 163, 184, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .p-bar-fill {
+      height: 100%;
+      background: #10B981;
+      width: 0%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Filters Section */
+    .filter-bar {
+      padding: 0 16px 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 8px 12px;
+    }
+    .light-theme .search-box {
+      background: #FFFFFF;
+      border-color: #E2E8F0;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: inherit;
+      font-size: 13px;
+      width: 100%;
+    }
+
+    .cat-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+    .cat-scroll::-webkit-scrollbar { display: none; }
+
+    .cat-chip {
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid #334155;
+      background: #1E293B;
+      font-size: 12px;
+      font-weight: 600;
+      color: #94A3B8;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .light-theme .cat-chip {
+      background: #FFFFFF;
+      border-color: #E2E8F0;
+    }
+
+    .cat-chip.active {
+      background: #10B981;
+      border-color: #10B981;
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    /* Habit Cards */
+    .habit-list {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .habit-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .light-theme .habit-card {
+      background: #FFFFFF;
+      border-color: #E2E8F0;
+    }
+
+    .habit-card.completed {
+      border-color: #10B981;
+      background: rgba(16, 185, 129, 0.06);
+    }
+
+    .habit-strip {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+    }
+
+    .habit-main {
+      flex: 1;
+      padding-left: 6px;
+    }
+
+    .h-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .habit-card.completed .h-title {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .h-desc {
+      font-size: 12px;
+      color: #94A3B8;
+      margin-bottom: 8px;
+    }
+
+    .h-badges {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .badge-streak {
+      background: rgba(245, 158, 11, 0.15);
+      color: #F59E0B;
+    }
+
+    .badge-target {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94A3B8;
+    }
+
+    .check-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 2px solid #475569;
+      background: #0F172A;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.2s transform;
+      margin-left: 10px;
+    }
+    .light-theme .check-btn {
+      background: #F8FAFC;
+      border-color: #CBD5E1;
+    }
+
+    .check-btn.checked {
+      background: #10B981;
+      border-color: #10B981;
+      color: #FFF;
+      transform: scale(1.05);
+    }
+
+    .delete-icon {
+      color: #64748B;
+      font-size: 13px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .delete-icon:hover { color: #EF4444; }
+
+    /* FAB */
+    .fab {
+      position: absolute;
+      bottom: 24px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: #10B981;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+      cursor: pointer;
+      z-index: 50;
+      border: none;
+      transition: transform 0.2s;
+    }
+    .fab:hover { transform: scale(1.08); }
+
+    /* Modal Overlay */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-sheet {
+      width: 100%;
+      background: #0F172A;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 22px;
+      border-top: 1px solid #334155;
+      animation: slideUp 0.3s ease-out;
+      max-height: 85%;
+      overflow-y: auto;
+    }
+    .light-theme .modal-sheet {
+      background: #FFFFFF;
+      border-top-color: #E2E8F0;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #94A3B8;
+      margin-bottom: 6px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      background: #1E293B;
+      color: inherit;
+      outline: none;
+      font-size: 14px;
+    }
+    .light-theme .form-group input {
+      background: #F8FAFC;
+      border-color: #E2E8F0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      background: #10B981;
+      color: #FFF;
+      font-weight: 800;
+      border: none;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* Analytics View */
+    .analytics-view {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .light-theme .stat-card {
+      background: #FFFFFF;
+      border-color: #E2E8F0;
+    }
+
+    .stat-val {
+      font-size: 22px;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .stat-lbl {
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .stat-sub {
+      font-size: 10px;
+      color: #94A3B8;
+    }
+
+    /* Weekly Chart */
+    .chart-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .light-theme .chart-card {
+      background: #FFFFFF;
+      border-color: #E2E8F0;
+    }
+
+    .bar-chart {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 120px;
+      margin-top: 14px;
+    }
+
+    .bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      height: 100%;
+      justify.content: flex-end;
+    }
+
+    .bar-track {
+      width: 14px;
+      height: 80px;
+      background: rgba(148, 163, 184, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 100%;
+      background: #6366F1;
+      border-radius: 8px;
+      transition: height 0.4s ease;
+    }
+
+    .bar-lbl {
+      font-size: 10px;
+      color: #94A3B8;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-frame" id="mobileApp">
+    <!-- Dynamic Island Notch -->
+    <div class="notch"><div class="camera-dot"></div></div>
+
+    <!-- Header -->
+    <div class="app-header">
+      <div class="top-bar">
+        <div>
+          <div class="brand-title">
+            Alavatu Chesko
+            <span class="telugu-badge">అలవాటు చేసుకో</span>
+          </div>
+          <div class="sub-date" id="headerDate">Aug 2, 2026</div>
+        </div>
+
+        <div class="header-actions">
+          <div class="streak-pill">
+            🔥 <span id="headerStreak">0</span>
+          </div>
+          <button class="theme-btn" id="themeToggleBtn">☀️</button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="tab-nav">
+        <div class="tab-btn active" id="tabDashBtn" onclick="switchTab('dashboard')">⚡ Today's Habits</div>
+        <div class="tab-btn" id="tabAnalyticsBtn" onclick="switchTab('analytics')">📊 Analytics & Trends</div>
+      </div>
+    </div>
+
+    <!-- Viewport Container -->
+    <div class="content-viewport">
+      
+      <!-- DASHBOARD VIEW -->
+      <div id="dashboardView">
+        <!-- Date Strip -->
+        <div class="date-strip" id="dateStrip"></div>
+
+        <!-- Progress Banner -->
+        <div class="progress-banner">
+          <div class="progress-top">
+            <div>
+              <div class="p-title">Daily Progress</div>
+              <div class="p-sub" id="pSubText">0 of 0 habits checked</div>
+              <div class="p-motto" id="pMotto">Keep building your routine!</div>
+            </div>
+            <div class="p-circle" id="pPercentCircle">0%</div>
+          </div>
+          <div class="p-bar-track">
+            <div class="p-bar-fill" id="pBarFill"></div>
+          </div>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="filter-bar">
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" id="searchInput" placeholder="Search habits..." oninput="renderHabits()">
+          </div>
+          <div class="cat-scroll" id="catScroll"></div>
+        </div>
+
+        <!-- Habits List -->
+        <div class="habit-list" id="habitList"></div>
+      </div>
+
+      <!-- ANALYTICS VIEW -->
+      <div id="analyticsView" style="display: none;" class="analytics-view">
+        <div style="margin-bottom: 4px;">
+          <h2 style="font-size: 20px; font-weight: 800;">Habit Analytics</h2>
+          <p style="font-size: 12px; color: #94A3B8;">Consistency, streaks, & performance trends</p>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div style="font-size: 18px;">🏆</div>
+            <div class="stat-val" style="color: #F59E0B;" id="statBestStreak">0 days</div>
+            <div class="stat-lbl">Best Streak</div>
+            <div class="stat-sub">Longest active habit streak</div>
+          </div>
+
+          <div class="stat-card">
+            <div style="font-size: 18px;">⚡</div>
+            <div class="stat-val" style="color: #10B981;" id="statWeeklyRate">0%</div>
+            <div class="stat-lbl">Weekly Rate</div>
+            <div class="stat-sub">7-day completion average</div>
+          </div>
+
+          <div class="stat-card">
+            <div style="font-size: 18px;">✅</div>
+            <div class="stat-val" style="color: #3B82F6;" id="statTotalCheckins">0</div>
+            <div class="stat-lbl">Check-ins</div>
+            <div class="stat-sub">Total habit check-ins</div>
+          </div>
+
+          <div class="stat-card">
+            <div style="font-size: 18px;">📌</div>
+            <div class="stat-val" style="color: #8B5CF6;" id="statActiveHabits">0</div>
+            <div class="stat-lbl">Active Habits</div>
+            <div class="stat-sub">Tracking now</div>
+          </div>
+        </div>
+
+        <!-- 7-Day Trend Chart -->
+        <div class="chart-card">
+          <h3 style="font-size: 15px; font-weight: 800;">📈 7-Day Completion Trend</h3>
+          <p style="font-size: 11px; color: #94A3B8;">Check-ins logged per day</p>
+          <div class="bar-chart" id="weeklyChart"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" onclick="openAddModal()">+</button>
+
+    <!-- Modal Form -->
+    <div class="modal-backdrop" id="addModal">
+      <div class="modal-sheet">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <h3 style="font-size: 18px; font-weight: 800;">✨ Create New Habit</h3>
+          <span style="cursor: pointer; font-size: 18px; color: #94A3B8;" onclick="closeAddModal()">✕</span>
+        </div>
+
+        <form id="addHabitForm" onsubmit="handleFormSubmit(event)">
+          <div class="form-group">
+            <label>Habit Name *</label>
+            <input type="text" id="habitTitle" placeholder="e.g. Morning Water, Read Book" required />
+          </div>
+
+          <div class="form-group">
+            <label>Note / Motivation</label>
+            <input type="text" id="habitDesc" placeholder="e.g. 15 mins for health" />
+          </div>
+
+          <div class="form-group">
+            <label>Category</label>
+            <select id="habitCat">
+              <option value="Health">Health</option>
+              <option value="Fitness">Fitness</option>
+              <option value="Mindfulness">Mindfulness</option>
+              <option value="Productivity">Productivity</option>
+              <option value="Learning">Learning</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Target Goal</label>
+            <input type="text" id="habitTarget" placeholder="e.g. 2 Liters, 20 Mins" value="1 time" />
+          </div>
+
+          <button type="submit" class="submit-btn">+ Add Habit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State management
+    const INITIAL_HABITS = [
+      { id: 'h1', title: 'Drink 2.5L Water', desc: 'Stay hydrated throughout the day', category: 'Health', target: '2.5 Liters', color: '#10B981' },
+      { id: 'h2', title: 'Morning Yoga & Stretch', desc: '15 mins mindfulness & posture', category: 'Mindfulness', target: '15 Mins', color: '#8B5CF6' },
+      { id: 'h3', title: 'Read 20 Pages', desc: 'Read self-growth or tech book', category: 'Learning', target: '20 Pages', color: '#EC4899' },
+      { id: 'h4', title: '30-Min Evening Workout', desc: 'Cardio, strength or walk', category: 'Fitness', target: '30 Mins', color: '#F59E0B' },
+      { id: 'h5', title: 'Deep Focus Coding', desc: 'Build projects without distractions', category: 'Productivity', target: '90 Mins', color: '#3B82F6' }
+    ];
+
+    let habits = JSON.parse(localStorage.getItem('alavatu_habits')) || INITIAL_HABITS;
+    let logs = JSON.parse(localStorage.getItem('alavatu_logs')) || generateDefaultLogs();
+    let selectedDateKey = getTodayKey();
+    let activeCategory = 'All';
+    let isDark = true;
+
+    function getTodayKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    function generateDefaultLogs() {
+      const l = {};
+      const today = new Date();
+      INITIAL_HABITS.forEach(h => {
+        l[h.id] = {};
+        for(let i=0; i<14; i++) {
+          const d = new Date(today);
+          d.setDate(today.getDate() - i);
+          const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+          if (i % 4 !== 3) l[h.id][k] = true;
+        }
+      });
+      return l;
+    }
+
+    function saveState() {
+      localStorage.setItem('alavatu_habits', JSON.stringify(habits));
+      localStorage.setItem('alavatu_logs', JSON.stringify(logs));
+    }
+
+    // Initialize UI
+    function init() {
+      document.getElementById('headerDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+      
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        isDark = !isDark;
+        document.getElementById('mobileApp').classList.toggle('light-theme', !isDark);
+        document.getElementById('themeToggleBtn').innerText = isDark ? '☀️' : '🌙';
+      });
+
+      renderDateStrip();
+      renderCategories();
+      renderHabits();
+    }
+
+    function renderDateStrip() {
+      const strip = document.getElementById('dateStrip');
+      strip.innerHTML = '';
+      const today = new Date();
+
+      for (let i = -3; i <= 3; i++) {
+        const d = new Date();
+        d.setDate(today.getDate() + i);
+        const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+        const dayNum = d.getDate();
+        const isSelected = k === selectedDateKey;
+
+        const card = document.createElement('div');
+        card.className = `date-card ${isSelected ? 'selected' : ''}`;
+        card.innerHTML = `<div class="d-name">${dayName}</div><div class="d-num">${dayNum}</div>`;
+        card.onclick = () => {
+          selectedDateKey = k;
+          renderDateStrip();
+          renderHabits();
+        };
+        strip.appendChild(card);
+      }
+    }
+
+    function renderCategories() {
+      const cats = ['All', 'Health', 'Fitness', 'Mindfulness', 'Productivity', 'Learning'];
+      const container = document.getElementById('catScroll');
+      container.innerHTML = '';
+
+      cats.forEach(c => {
+        const chip = document.createElement('div');
+        chip.className = `cat-chip ${activeCategory === c ? 'active' : ''}`;
+        chip.innerText = c;
+        chip.onclick = () => {
+          activeCategory = c;
+          renderCategories();
+          renderHabits();
+        };
+        container.appendChild(chip);
+      });
+    }
+
+    function renderHabits() {
+      const list = document.getElementById('habitList');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      list.innerHTML = '';
+
+      const filtered = habits.filter(h => {
+        const matchCat = activeCategory === 'All' || h.category === activeCategory;
+        const matchSearch = h.title.toLowerCase().includes(search) || (h.desc && h.desc.toLowerCase().includes(search));
+        return matchCat && matchSearch;
+      });
+
+      let completedCount = 0;
+
+      filtered.forEach(h => {
+        const isDone = logs[h.id] && logs[h.id][selectedDateKey];
+        if (isDone) completedCount++;
+
+        const streak = calculateStreak(h.id);
+
+        const card = document.createElement('div');
+        card.className = `habit-card ${isDone ? 'completed' : ''}`;
+        card.innerHTML = `
+          <div class="habit-strip" style="background: ${h.color || '#10B981'};"></div>
+          <div class="habit-main">
+            <div style="display:flex; justify-content:space-between;">
+              <div class="h-title">${h.title}</div>
+              <span class="delete-icon" onclick="deleteHabit('${h.id}')">🗑️</span>
+            </div>
+            ${h.desc ? `<div class="h-desc">${h.desc}</div>` : ''}
+            <div class="h-badges">
+              <span class="badge" style="background: rgba(16,185,129,0.15); color: ${h.color || '#10B981'}">${h.category}</span>
+              <span class="badge badge-streak">🔥 ${streak}d streak</span>
+              ${h.target ? `<span class="badge badge-target">🎯 ${h.target}</span>` : ''}
+            </div>
+          </div>
+          <button class="check-btn ${isDone ? 'checked' : ''}" onclick="toggleHabit('${h.id}')">✓</button>
+        `;
+        list.appendChild(card);
+      });
+
+      // Update progress banner
+      const total = habits.length;
+      const doneTotal = habits.filter(h => logs[h.id] && logs[h.id][selectedDateKey]).length;
+      const pct = total > 0 ? Math.round((doneTotal / total) * 100) : 0;
+
+      document.getElementById('pSubText').innerText = `${doneTotal} of ${total} habits completed`;
+      document.getElementById('pPercentCircle').innerText = `${pct}%`;
+      document.getElementById('pBarFill').style.width = `${pct}%`;
+
+      // Update total streak in header
+      let totalStreak = 0;
+      habits.forEach(h => totalStreak += calculateStreak(h.id));
+      document.getElementById('headerStreak').innerText = totalStreak;
+
+      updateAnalytics();
+    }
+
+    function toggleHabit(id) {
+      if (!logs[id]) logs[id] = {};
+      if (logs[id][selectedDateKey]) {
+        delete logs[id][selectedDateKey];
+      } else {
+        logs[id][selectedDateKey] = true;
+      }
+      saveState();
+      renderHabits();
+    }
+
+    function deleteHabit(id) {
+      habits = habits.filter(h => h.id !== id);
+      delete logs[id];
+      saveState();
+      renderHabits();
+    }
+
+    function calculateStreak(id) {
+      const hLog = logs[id] || {};
+      let streak = 0;
+      const today = new Date();
+      let checkDate = new Date(today);
+
+      let key = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+      if (hLog[key]) streak++;
+      else {
+        checkDate.setDate(checkDate.getDate() - 1);
+        key = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+        if (!hLog[key]) return 0;
+      }
+
+      while (true) {
+        checkDate.setDate(checkDate.getDate() - 1);
+        key = `${checkDate.getFullYear()}-${String(checkDate.getMonth()+1).padStart(2,'0')}-${String(checkDate.getDate()).padStart(2,'0')}`;
+        if (hLog[key]) streak++;
+        else break;
+      }
+      return streak;
+    }
+
+    function switchTab(tab) {
+      document.getElementById('dashboardView').style.display = tab === 'dashboard' ? 'block' : 'none';
+      document.getElementById('analyticsView').style.display = tab === 'analytics' ? 'flex' : 'none';
+      
+      document.getElementById('tabDashBtn').classList.toggle('active', tab === 'dashboard');
+      document.getElementById('tabAnalyticsBtn').classList.toggle('active', tab === 'analytics');
+    }
+
+    function updateAnalytics() {
+      let maxStreak = 0;
+      habits.forEach(h => {
+        const s = calculateStreak(h.id);
+        if (s > maxStreak) maxStreak = s;
+      });
+      document.getElementById('statBestStreak').innerText = `${maxStreak} days`;
+      document.getElementById('statActiveHabits').innerText = habits.length;
+
+      let totalLogs = 0;
+      Object.values(logs).forEach(hl => totalLogs += Object.keys(hl).length);
+      document.getElementById('statTotalCheckins').innerText = totalLogs;
+
+      // 7-day chart
+      const chart = document.getElementById('weeklyChart');
+      chart.innerHTML = '';
+      const today = new Date();
+      let weekCompleted = 0;
+
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        const lbl = d.toLocaleDateString('en-US', { weekday: 'short' });
+
+        let done = 0;
+        habits.forEach(h => { if (logs[h.id] && logs[h.id][k]) done++; });
+        weekCompleted += done;
+
+        const rate = habits.length > 0 ? Math.round((done / habits.length) * 100) : 0;
+
+        const col = document.createElement('div');
+        col.className = 'bar-col';
+        col.innerHTML = `
+          <div class="bar-track">
+            <div class="bar-fill" style="height: ${Math.max(rate, 10)}%; background: ${rate >= 80 ? '#10B981' : '#6366F1'};"></div>
+          </div>
+          <div class="bar-lbl">${lbl}</div>
+        `;
+        chart.appendChild(col);
+      }
+
+      const totalPossible = habits.length * 7;
+      const rate7 = totalPossible > 0 ? Math.round((weekCompleted / totalPossible) * 100) : 0;
+      document.getElementById('statWeeklyRate').innerText = `${rate7}%`;
+    }
+
+    function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('habitTitle').value.trim();
+      const desc = document.getElementById('habitDesc').value.trim();
+      const category = document.getElementById('habitCat').value;
+      const target = document.getElementById('habitTarget').value.trim();
+
+      if (!title) return;
+
+      const colors = { Health: '#10B981', Fitness: '#F59E0B', Mindfulness: '#8B5CF6', Productivity: '#3B82F6', Learning: '#EC4899' };
+
+      const newHabit = {
+        id: 'h_' + Date.now(),
+        title,
+        desc,
+        category,
+        target,
+        color: colors[category] || '#10B981'
+      };
+
+      habits.unshift(newHabit);
+      saveState();
+      renderHabits();
+      closeAddModal();
+      document.getElementById('addHabitForm').reset();
+    }
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          console.log('Alavatu Chesko PWA Service Worker Registered!');
+        }).catch(err => {
+          console.log('SW reg failed', err);
+        });
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

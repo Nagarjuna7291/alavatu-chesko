@@ -1,0 +1,22 @@
+{
+  "name": "Alavatu Chesko - Daily Habit Tracker",
+  "short_name": "AlavatuChesko",
+  "description": "Mobile-first Daily Habit Tracker app (అలవాటు చేసుకో)",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F172A",
+  "theme_color": "#10B981",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
